@@ -31,7 +31,6 @@ async def grab_lessons():
 
     df = pd.DataFrame(object)
 
-
     now = datetime.now()
 
     formatted_date = now.strftime("%Y-%m-%d-%H-%M-%S")
@@ -43,7 +42,7 @@ async def grab_lessons():
 
     wrap_format = workbook.add_format({'text_wrap': True})
 
-    df.style.apply(highlight_conflicts, subset=rooms).to_excel(writer, sheet_name='Конфликты', index=False, na_rep='NaN')
+    df.style.apply(highlight_conflicts, subset=rooms).to_excel(writer, sheet_name='Конфликты', index=False, na_rep='NaN', freeze_panes=(1, 1))
 
 
     for i in range(1, 1000):
