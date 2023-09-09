@@ -1,4 +1,5 @@
 
+import openpyxl
 from services.search import search_service
 import asyncio
 from services.analyze import check_data, create_base_object, fill_data
@@ -9,6 +10,7 @@ import pandas as pd
 
 def highlight_conflicts(value):
     return [highlight_cell(v) for v in value]
+
 
 def highlight_cell(value):
     if "Конфликт" in value:
@@ -36,14 +38,15 @@ async def grab_lessons():
     formatted_date = now.strftime("%Y-%m-%d-%H-%M-%S")
     file_name = f'report-{formatted_date}.xlsx'
 
-    writer = pd.ExcelWriter(file_name, engine='xlsxwriter') 
+    writer = pd.ExcelWriter(file_name) 
 
     workbook = writer.book
 
-    wrap_format = workbook.add_format({'text_wrap': True})
+    wrap_format = workbook.add_format({'text_wrap': True, 'bold': True })
 
+    wrap_format.set_text_wrap(True)
+    df.style.set_properties({ "text_wrap": True })
     df.style.apply(highlight_conflicts, subset=rooms).to_excel(writer, sheet_name='Конфликты', index=False, na_rep='NaN', freeze_panes=(1, 1))
-
 
     for i in range(1, 1000):
         writer.sheets['Конфликты'].set_row(i, 80, wrap_format)
