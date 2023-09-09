@@ -7,8 +7,17 @@ from services.common import rooms
 
 import pandas as pd
 
-def highlight_conflict(value):
-    return ['background-color: red' if "Конфликт" in v else '' for v in value]
+def highlight_conflicts(value):
+    return [highlight_cell(v) for v in value]
+
+def highlight_cell(value):
+    if "Конфликт" in value:
+        return 'background-color: red'
+    if len(value.split(":")) >= 2:
+        return 'background-color: yellow'
+    if len(value) != 0:
+        return 'background-color: #f7f7f7'
+    return ''
 
 async def grab_lessons():
     scheduleObj = await search_service.grab_groups("https://mmf.bsu.by/ru/raspisanie-zanyatij/")
@@ -21,29 +30,27 @@ async def grab_lessons():
 
 
     df = pd.DataFrame(object)
-    writer = pd.ExcelWriter('file2.xlsx') 
+    writer = pd.ExcelWriter('file2.xlsx', engine='xlsxwriter') 
 
     workbook = writer.book
 
     wrap_format = workbook.add_format({'text_wrap': True})
 
-    df.style.apply(highlight_conflict, subset=rooms)
-
-    df.style.apply(highlight_conflict, subset=rooms).to_excel(writer, sheet_name='Конфликты', index=False, na_rep='NaN')
+    df.style.apply(highlight_conflicts, subset=rooms).to_excel(writer, sheet_name='Конфликты', index=False, na_rep='NaN')
 
 
-
-    for i in range(50):
-        writer.sheets['Конфликты'].set_row(i, 80)
+    for i in range(1, 1000):
+        writer.sheets['Конфликты'].set_row(i, 80, wrap_format)
 
 
     for column in df:
         column_length = max(df[column].astype(str).map(len).max(), len(column))
         col_idx = df.columns.get_loc(column)
+
         if column != "Время\Аудитории":
           writer.sheets['Конфликты'].set_column(col_idx, col_idx, 20, wrap_format)
           continue
-        writer.sheets['Конфликты'].set_column(col_idx, col_idx, column_length)
+        writer.sheets['Конфликты'].set_column(col_idx, col_idx, column_length, None)
 
     writer.close()
 

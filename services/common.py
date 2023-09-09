@@ -100,4 +100,4 @@ def convert_lesson_to_str(lesson: dict) -> str:
     meta = "-".join(lesson['meta'].split())
     if len(meta) != 0:
        meta = "-" + meta
-    return f"{lesson['course']}-{lesson['group']}{meta} {lesson['teacher']} {lesson['type']}"
+    return f"{lesson['course']}-{lesson['group']}{meta} {lesson['teacher']} {lesson['subject']} {lesson['type']}"

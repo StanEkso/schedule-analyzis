@@ -1,4 +1,5 @@
 from .common import lesson_times, rooms, lesson_to_time, convert_lesson_to_str
+from .matcher import is_matching
 
 def collectRooms(lessons: list[dict]):
   rooms = set()
@@ -82,6 +83,8 @@ def to_item_string(lessons: list[dict]):
 
 def has_conflict(lessons: list[dict]) -> bool:
   if (len(lessons) <= 1):
+     return False
+  if is_matching(lessons):
      return False
   current: str = "INITIAL-VALUE"
   for lesson in lessons:
