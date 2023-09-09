@@ -93,6 +93,8 @@ rooms = [
     ""
 ]
 
+lesson_separator = " /// "
+
 def lesson_to_time(lesson: dict):
   return f"{lesson.get('weekday')} {lesson.get('time')}"
 

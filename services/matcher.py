@@ -22,6 +22,38 @@ matchers = [
   {
     "type": "Лекция",
     "subjects": ["социология", "экономика", "бжч"],
+  },
+  {
+    "courses": ["1", "2"],
+    "groups": ["4", "5"],
+  },
+  {
+    "subjects": ["Английский язык"],
+    "courses": ['1', '2'],
+    "groups": ['2', '6'],
+  },
+  {
+    "subjects": ["Английский язык"],
+    "courses": ['1', '2'],
+    "groups": ['1', '3'],
+  },
+    {
+    "subjects": ["Английский язык"],
+    "courses": ['1', '2'],
+    "groups": ['7', '8'],
+    },
+    {
+    "type": "Лекция",
+    "courses": ['1', '2', '3', '4'],
+    "groups": ['7', '8'],
+  },
+  {
+    "subjects": ["Язык С#"],
+    "groups": ["1", "6"],
+  },
+  {
+    "subjects": ["Физическая культура"],
+    "courses": ["1", "2", "3"]
   }
 ]
 
@@ -40,7 +72,6 @@ def is_matches(lesson: dict):
     if bool(matcher.get("type")) and not lesson["type"] == matcher["type"]:
       continue
     if bool(matcher.get("subjects")):
-      print("has subjects")
       res = False
       for subject in matcher.get("subjects"):
         if subject.lower() in lesson["subject"].lower():

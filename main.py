@@ -1,10 +1,10 @@
 
 from services.search import search_service
 import asyncio
-from services.analyze import check_data, collectRooms, collectTimes, create_base_object, fill_data
-from services.common import rooms
+from services.analyze import check_data, create_base_object, fill_data
+from services.common import rooms, lesson_separator
 
-
+from datetime import datetime
 import pandas as pd
 
 def highlight_conflicts(value):
@@ -13,7 +13,7 @@ def highlight_conflicts(value):
 def highlight_cell(value):
     if "Конфликт" in value:
         return 'background-color: red'
-    if len(value.split(":")) >= 2:
+    if len(value.split(lesson_separator)) >= 2:
         return 'background-color: yellow'
     if len(value) != 0:
         return 'background-color: #f7f7f7'
@@ -30,7 +30,14 @@ async def grab_lessons():
 
 
     df = pd.DataFrame(object)
-    writer = pd.ExcelWriter('file2.xlsx', engine='xlsxwriter') 
+
+
+    now = datetime.now()
+
+    formatted_date = now.strftime("%Y-%m-%d-%H-%M-%S")
+    file_name = f'report-{formatted_date}.xlsx'
+
+    writer = pd.ExcelWriter(file_name, engine='xlsxwriter') 
 
     workbook = writer.book
 

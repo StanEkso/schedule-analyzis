@@ -1,4 +1,4 @@
-from .common import lesson_times, rooms, lesson_to_time, convert_lesson_to_str
+from .common import lesson_times, rooms, lesson_to_time, convert_lesson_to_str, lesson_separator
 from .matcher import is_matching
 
 def collectRooms(lessons: list[dict]):
@@ -73,7 +73,7 @@ def check_data(object):
 
 
 def to_item_string(lessons: list[dict]):
-  mStr = ":".join([convert_lesson_to_str(v) for v in lessons])
+  mStr = lesson_separator.join([convert_lesson_to_str(v) for v in lessons])
   if (has_conflict(lessons)):
       return "Конфликт: " + mStr
   return mStr
