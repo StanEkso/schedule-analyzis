@@ -1,10 +1,10 @@
 
 import json
 import openpyxl
-from services.search import search_service
+from shared.services.search import search_service
 import asyncio
-from services.analyze import check_data, collectTimes, create_base_object, fill_data
-from services.common import rooms, lesson_separator
+from shared.services.analyze import check_data, collectTimes, create_base_object, fill_data
+from shared.services.common import rooms, lesson_separator
 
 from datetime import datetime
 import pandas as pd

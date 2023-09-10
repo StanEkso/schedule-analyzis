@@ -1,3 +1,5 @@
+from ..types.lesson import Lesson
+
 matchers = [
   {
     "courses": ['1'],
@@ -62,39 +64,44 @@ matchers = [
   }
 ]
 
-def is_matching(lessons: list[dict]):
+def is_matching(lessons: list[Lesson]):
   for lesson in lessons:
     if not is_matches(lesson):
       return False
+    
   return True
 
-def is_matching_course(matcher: dict, lesson: dict):
+def is_matching_course(matcher: dict, lesson: Lesson):
   courses = matcher.get("courses")
   if bool(courses):
     return lesson.get("course") in courses
+  
   return True
 
-def is_matching_group(matcher: dict, lesson: dict):
+def is_matching_group(matcher: dict, lesson: Lesson):
   groups = matcher.get("groups")
   if bool(groups):
     return lesson.get("group") in groups
+  
   return True
 
-def is_matching_type(matcher: dict, lesson: dict):
+def is_matching_type(matcher: dict, lesson: Lesson):
   if bool(matcher.get("type")):
     return lesson["type"] == matcher["type"]
   return True
 
-def is_matching_subject(matcher: dict, lesson: dict):
-  subjects = matcher.get("subjects")
+def is_matching_subject(matcher: dict, lesson: Lesson):
+  subjects: list[str] = matcher.get("subjects")
   if not bool(subjects):
     return True
+  
   for subject in subjects:
     if subject.lower() in lesson["subject"].lower():
       return True
+    
   return False
 
-def is_matches(lesson: dict):
+def is_matches(lesson: Lesson):
   for matcher in matchers:
     if not is_matching_course(matcher, lesson):
       continue
@@ -109,4 +116,5 @@ def is_matches(lesson: dict):
       continue
 
     return True
+  
   return False

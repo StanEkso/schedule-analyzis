@@ -1,39 +1,15 @@
 from .common import lesson_times, rooms, lesson_to_time, convert_lesson_to_str, lesson_separator
 from .matcher import is_matching
+from ..types.lesson import Lesson
 
-def collectRooms(lessons: list[dict]):
+def collectRooms(lessons: list[Lesson]):
   rooms = set()
   for lesson in lessons:
     rooms.add(lesson.get("room"))
   
   return rooms
 
-
-class Item:
-  day: str
-  time: str
-
-  def __init__(self, day, time) -> None:
-    self.day = day
-    self.time = time
-    pass
-
-  def __repr__(self) -> str:
-    return f"'{self.day} {self.time}'"
-  
-  def __eq__(self, other):
-        if isinstance(other, Item):
-            return ((self.day == other.day) and (self.time == other.time))
-        else:
-            return False
-  def __ne__(self, other):
-        return (not self.__eq__(other))
-
-  def __hash__(self) -> int:
-    return hash(self.__repr__())
-
-
-def collectTimes(lessons: list[dict]):
+def collectTimes(lessons: list[Lesson]):
   times = set()
   for lesson in lessons:
     times.add(f"{lesson['course']}-{lesson['group']}")
@@ -49,7 +25,7 @@ def create_base_object():
   
   return base
 
-def fill_data(lessons: list[dict], object):
+def fill_data(lessons: list[Lesson], object):
   for lesson in lessons:
     try:
       room = lesson.get("room")
@@ -67,22 +43,20 @@ def fill_data(lessons: list[dict], object):
        pass
     
 
-def check_data(object):
+def check_data(object: dict):
   for room in rooms:
-      object[room] = [to_item_string(v) for v in object[room]]
-      continue
+    object[room] = [to_item_string(v) for v in object[room]]
+    continue
 
 
-def to_item_string(lessons: list[dict]):
+def to_item_string(lessons: list[Lesson]):
   mStr = lesson_separator.join([convert_lesson_to_str(v) for v in lessons])
   if (has_conflict(lessons)):
-      return "Конфликт: " + mStr
+    return "Конфликт: " + mStr
   return mStr
-          
-               
 
 
-def has_conflict(lessons: list[dict]) -> bool:
+def has_conflict(lessons: list[Lesson]) -> bool:
   if (len(lessons) <= 1):
      return False
   if is_matching(lessons):
