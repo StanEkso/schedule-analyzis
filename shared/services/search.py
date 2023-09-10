@@ -4,6 +4,7 @@ import aiohttp
 from bs4 import BeautifulSoup
 import requests
 from .parsing import parser_service
+from ..types.lesson import Lesson
 
 
 class SearchService:
@@ -42,7 +43,7 @@ class SearchService:
         schedules = await asyncio.gather(*tasks)
         return [item for sublist in schedules for item in sublist]
     
-    def grab_schedule_sync(self, page_links: list[str]):
+    def grab_schedule_sync(self, page_links: list[str]) -> list[Lesson]:
         items = []
         for link in page_links:
             items += parser_service.parse_lessons_sync(link)

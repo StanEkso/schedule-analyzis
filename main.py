@@ -9,11 +9,11 @@ from shared.services.common import rooms, lesson_separator
 from datetime import datetime
 import pandas as pd
 
-def highlight_conflicts(value):
+def highlight_conflicts(value: list[str]):
     return [highlight_cell(v) for v in value]
 
 
-def highlight_cell(value):
+def highlight_cell(value: str):
     if "Конфликт" in value:
         return 'background-color: red'
     if len(value.split(lesson_separator)) >= 2:

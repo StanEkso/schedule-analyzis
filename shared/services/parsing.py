@@ -1,11 +1,11 @@
-import sys
 
+import time
 import requests
-sys.path.append("..")
 
 from bs4 import BeautifulSoup
 import aiohttp
 
+from ..types.lesson import Lesson
 
 class ParserService:
     async def parse_lessons(self, url: str) -> list:
@@ -34,7 +34,7 @@ class ParserService:
                         file.write(text)
                 return result
             
-    def parse_lessons_sync(self, url: str) -> list:
+    def parse_lessons_sync(self, url: str) -> list[Lesson]:
         """
         Deprecated (Synchronous)
         """
@@ -46,14 +46,13 @@ class ParserService:
         course, group = ParserService.extract_course_group(url)
         soup = BeautifulSoup(text, features="html.parser")
 
-        time = soup.find_all('td', {'class': 'time'})
+        time_cells = soup.find_all('td', {'class': 'time'})
         remarks = soup.find_all('td', {"class": "remarks"})
         subjectAndTeacher = soup.find_all('td', {"class": "subject-teachers"})
         lessonType = soup.find_all('td', {'class': 'lecture-practice'})
         room = soup.find_all('td', {'class': 'room'})
         weekday = soup.find_all('td', {'class': 'weekday'})
-        
-        result = [self.map_tuple_to_lesson(i, course, group) for i in zip(time, remarks, subjectAndTeacher, lessonType, room, weekday)]
+        result = [self.map_tuple_to_lesson(i, course, group) for i in zip(time_cells, remarks, subjectAndTeacher, lessonType, room, weekday)]
         if len(result) == 0:
             print(f"Error with loading {course}-{group}")
             with open(f"pages/{course}-{group}.html", "w+", encoding="utf-8") as file:
@@ -74,7 +73,7 @@ class ParserService:
         return tag.text.replace("\n", "")
 
     @staticmethod
-    def map_tuple_to_lesson(lessonTuple: tuple, course: str = "", group: str = ""):
+    def map_tuple_to_lesson(lessonTuple: tuple, course: str = "", group: str = "") -> Lesson:
         time, remarks, subject_n_teacher, lesson_type, room, weekday = lessonTuple
         for br in subject_n_teacher.find_all("br"):
             br.replace_with(" %s\n" % br.text)
@@ -87,7 +86,7 @@ class ParserService:
         # Using lower() method for getting day in lower case.
         # Used for getting day from dictionary.
         weekday = weekday.lower()
-        lesson = {
+        lesson: Lesson = {
             "time": time,
             "meta": remarks,
             "subject": subject_n_teacher,
