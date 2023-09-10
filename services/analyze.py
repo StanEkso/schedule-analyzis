@@ -36,7 +36,7 @@ class Item:
 def collectTimes(lessons: list[dict]):
   times = set()
   for lesson in lessons:
-    times.add(Item(lesson.get("weekday"), lesson.get("time")))
+    times.add(f"{lesson['course']}-{lesson['group']}")
 
   return times
 
@@ -63,6 +63,7 @@ def fill_data(lessons: list[dict], object):
         lessonList.append(lesson)
         object[room][time_index] = lessonList
     except Exception as excp:
+       print(excp)
        pass
     
 

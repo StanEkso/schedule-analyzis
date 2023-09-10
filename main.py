@@ -1,8 +1,9 @@
 
+import json
 import openpyxl
 from services.search import search_service
 import asyncio
-from services.analyze import check_data, create_base_object, fill_data
+from services.analyze import check_data, collectTimes, create_base_object, fill_data
 from services.common import rooms, lesson_separator
 
 from datetime import datetime
@@ -25,9 +26,16 @@ async def grab_lessons():
     scheduleObj = await search_service.grab_groups("https://mmf.bsu.by/ru/raspisanie-zanyatij/")
     lessons = await search_service.grab_schedule(scheduleObj)
 
+    times = list(collectTimes(lessons))
+
+    times.sort(key=lambda v: (v[0:1], v[2:3]))
+
+    print(times)
+
     object = create_base_object()
 
     fill_data(lessons, object)
+
     check_data(object)
 
 

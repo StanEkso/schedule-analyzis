@@ -8,6 +8,9 @@ import aiohttp
 class ParserService:
     async def parse_lessons(self, url: str) -> list:
         course, group = ParserService.extract_course_group(url)
+
+        print(url)
+
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 text = await response.text()
@@ -21,7 +24,10 @@ class ParserService:
                 room = soup.find_all('td', {'class': 'room'})
                 weekday = soup.find_all('td', {'class': 'weekday'})
 
-                return [self.map_tuple_to_lesson(i, course, group) for i in zip(time, remarks, subjectAndTeacher, lessonType, room, weekday)]
+                result = [self.map_tuple_to_lesson(i, course, group) for i in zip(time, remarks, subjectAndTeacher, lessonType, room, weekday)]
+                if len(result) == 0:
+                    print(f"Error with loading {course}-{group}")
+                return result
 
     @staticmethod
     def convert_lesson_type(lessonType: str) -> str:
