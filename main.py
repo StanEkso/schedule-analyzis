@@ -24,7 +24,7 @@ def highlight_cell(value):
 
 async def grab_lessons():
     scheduleObj = await search_service.grab_groups("https://mmf.bsu.by/ru/raspisanie-zanyatij/")
-    lessons = await search_service.grab_schedule(scheduleObj)
+    lessons = search_service.grab_schedule_sync(scheduleObj)
 
     times = list(collectTimes(lessons))
 
@@ -44,7 +44,7 @@ async def grab_lessons():
     now = datetime.now()
 
     formatted_date = now.strftime("%Y-%m-%d-%H-%M-%S")
-    file_name = f'report-{formatted_date}.xlsx'
+    file_name = f'results/report-{formatted_date}.xlsx'
 
     writer = pd.ExcelWriter(file_name) 
 

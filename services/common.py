@@ -1,3 +1,5 @@
+from ..types.lesson import Lesson
+
 lesson_times = [
   "понедельник 08:15–09:35",
   "понедельник 09:45–11:05",
@@ -46,6 +48,7 @@ lesson_times = [
   "пятница 19:10–20:30",
   "",
   "суббота 08:15–09:35",
+  "суббота 09:00–10:20",
   "суббота 09:45–11:05",
   'суббота 10:30–11:50',
   "суббота 11:15–12:35",
@@ -94,12 +97,19 @@ rooms = [
     "230",
     "238",
     "247",
-    ""
+    "",
+    "205",
+    "435",
+    "443",
+    "308",
+    "305",
+    "420",
+    "402",
 ]
 
 lesson_separator = " /// "
 
-def lesson_to_time(lesson: dict):
+def lesson_to_time(lesson: Lesson):
   return f"{lesson.get('weekday')} {lesson.get('time')}"
 
 def convert_lesson_to_str(lesson: dict) -> str:

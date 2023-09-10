@@ -1,4 +1,6 @@
 import sys
+
+import requests
 sys.path.append("..")
 
 from bs4 import BeautifulSoup
@@ -24,10 +26,39 @@ class ParserService:
                 room = soup.find_all('td', {'class': 'room'})
                 weekday = soup.find_all('td', {'class': 'weekday'})
 
+
                 result = [self.map_tuple_to_lesson(i, course, group) for i in zip(time, remarks, subjectAndTeacher, lessonType, room, weekday)]
                 if len(result) == 0:
                     print(f"Error with loading {course}-{group}")
+                    with open(f"pages/{course}-{group}.html", "w+", encoding="utf-8") as file:
+                        file.write(text)
                 return result
+            
+    def parse_lessons_sync(self, url: str) -> list:
+        """
+        Deprecated (Synchronous)
+        """
+
+        print(f"Parsing {url}")
+
+        text = requests.get(url).text
+
+        course, group = ParserService.extract_course_group(url)
+        soup = BeautifulSoup(text, features="html.parser")
+
+        time = soup.find_all('td', {'class': 'time'})
+        remarks = soup.find_all('td', {"class": "remarks"})
+        subjectAndTeacher = soup.find_all('td', {"class": "subject-teachers"})
+        lessonType = soup.find_all('td', {'class': 'lecture-practice'})
+        room = soup.find_all('td', {'class': 'room'})
+        weekday = soup.find_all('td', {'class': 'weekday'})
+        
+        result = [self.map_tuple_to_lesson(i, course, group) for i in zip(time, remarks, subjectAndTeacher, lessonType, room, weekday)]
+        if len(result) == 0:
+            print(f"Error with loading {course}-{group}")
+            with open(f"pages/{course}-{group}.html", "w+", encoding="utf-8") as file:
+                file.write(text)
+        return result
 
     @staticmethod
     def convert_lesson_type(lessonType: str) -> str:

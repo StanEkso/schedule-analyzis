@@ -2,6 +2,7 @@ import asyncio
 import aiohttp
 
 from bs4 import BeautifulSoup
+import requests
 from .parsing import parser_service
 
 
@@ -15,6 +16,15 @@ class SearchService:
                 links = content_area.find_all("a")
                 href_list: list[str] = [link.get("href") for link in links]
                 return [href for href in href_list if href.startswith(pageUrl)]
+            
+    def grab_links_sync(self, pageUrl: str) -> list[str]:
+        response = requests.get(pageUrl)
+        text = response.text
+        soup = BeautifulSoup(text, features="html.parser")
+        content_area = soup.find("section", {"class": "content"})
+        links = content_area.find_all("a")
+        href_list: list[str] = [link.get("href") for link in links]
+        return [href for href in href_list if href.startswith(pageUrl)]
 
     async def grab_groups(self, pageUrl: str) -> list[str]:
         courses = await self.grab_links(pageUrl)
@@ -31,6 +41,12 @@ class SearchService:
                 parser_service.parse_lessons(link)))
         schedules = await asyncio.gather(*tasks)
         return [item for sublist in schedules for item in sublist]
+    
+    def grab_schedule_sync(self, page_links: list[str]):
+        items = []
+        for link in page_links:
+            items += parser_service.parse_lessons_sync(link)
+        return items
     
 
 search_service = SearchService()
