@@ -117,3 +117,25 @@ def is_matches(lesson: Lesson):
     return True
   
   return False
+
+def is_required(lesson: Lesson) -> bool:
+  matchers = [{
+    "courses": ["3", "4"],
+    "groups": ["vf"]
+  }]
+  for matcher in matchers:
+    if not is_matching_course(matcher, lesson):
+      continue
+
+    if not is_matching_group(matcher, lesson):
+      continue
+
+    if not is_matching_type(matcher, lesson):
+      continue
+    
+    if not is_matching_subject(matcher, lesson):
+      continue
+
+    return False
+  
+  return True

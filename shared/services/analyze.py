@@ -1,5 +1,5 @@
 from .common import lesson_times, rooms, lesson_to_time, convert_lesson_to_str, lesson_separator
-from .matcher import is_matching
+from .matcher import is_matching, is_required
 from ..types.lesson import Lesson
 
 def collectRooms(lessons: list[Lesson]):
@@ -49,12 +49,54 @@ def check_data(object: dict):
     continue
 
 
+DIFFERENT_WEEKS_KEY = "t-dw/"
+MATCHING_KEY = "t-mg/"
+
 def to_item_string(lessons: list[Lesson]):
   mStr = lesson_separator.join([convert_lesson_to_str(v) for v in lessons])
-  if (has_conflict(lessons)):
+  first_week, second_week, others = split_into_weeks(lessons)
+  if (conflicting(lessons)):
     return "Конфликт: " + mStr
+  
+  if len(first_week) > 0 and len(second_week) > 0:
+    return DIFFERENT_WEEKS_KEY + mStr
+
   return mStr
 
+def split_into_weeks(lessons: list[Lesson]):
+  first_week: list[Lesson] = []
+  second_week: list[Lesson] = []
+  others: list[Lesson] = []
+
+  for lesson in lessons:
+    if '1н' in lesson['meta']:
+      first_week.append(lesson)
+      continue
+
+    if '2н' in lesson['meta']:
+      second_week.append(lesson)
+      continue
+
+    others.append(lesson)
+
+  return first_week, second_week, others
+
+def conflicting(lessons: list[Lesson]) -> bool:
+  first_week, second_week, others = split_into_weeks(lessons)
+
+  if (len(first_week) > 0 or len(second_week) > 0) and len(others) > 0:
+    return True
+  
+  if has_conflict(first_week):
+    return True
+  
+  if has_conflict(second_week):
+    return True
+  
+  if has_conflict(others):
+    return True
+  
+  return False
 
 def has_conflict(lessons: list[Lesson]) -> bool:
   if (len(lessons) <= 1):
@@ -68,9 +110,10 @@ def has_conflict(lessons: list[Lesson]) -> bool:
     current = lesson['meta']
   return False
 
-def extract_meta(lesson: str):
-  try:
-    index = lesson.index("н")
-    return lesson[index-1:index]
-  except:
-    return 'every'
+def filter_lessons(lessons: list[Lesson]) -> list[Lesson]:
+  matching: list[Lesson] = []
+  for lesson in lessons:
+    if is_required(lesson):
+      matching.append(lesson)
+
+  return matching

@@ -11,6 +11,9 @@ class Lesson(TypedDict):
     type: str
     room: str
     weekday: str
+    teacher: str
+    course: str
+    group: str
 
 
 def convert_lesson_to_str(lesson: Lesson) -> str:
