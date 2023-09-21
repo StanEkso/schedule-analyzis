@@ -1,1 +1,1 @@
-from .main import has_conflicts
+from .main import has_conflicts, has_conflict_inner, has_conflict_inner_tuple

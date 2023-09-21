@@ -1,7 +1,7 @@
 from .common import lesson_times, rooms, lesson_to_time, convert_lesson_to_str, lesson_separator
 from .matcher import is_matching, is_required
 from ..types.lesson import Lesson
-
+from shared.analyze import has_conflicts
 def collectRooms(lessons: list[Lesson]):
   rooms = set()
   for lesson in lessons:
@@ -55,11 +55,11 @@ MATCHING_KEY = "t-mg/"
 def to_item_string(lessons: list[Lesson]):
   mStr = lesson_separator.join([convert_lesson_to_str(v) for v in lessons])
   first_week, second_week, others = split_into_weeks(lessons)
-  if (conflicting(lessons)):
+  if (has_conflicts(lessons)):
     return "Конфликт: " + mStr
   
-  if len(first_week) > 0 and len(second_week) > 0:
-    return DIFFERENT_WEEKS_KEY + mStr
+  # if len(first_week) > 0 and len(second_week) > 0:
+  #   return DIFFERENT_WEEKS_KEY + mStr
 
   return mStr
 

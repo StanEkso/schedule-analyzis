@@ -1,6 +1,7 @@
 
 import json
 import openpyxl
+from shared.analyze.main import has_conflict_inner_tuple
 from shared.services.search import search_service
 import asyncio
 from shared.services.analyze import DIFFERENT_WEEKS_KEY, check_data, collectTimes, create_base_object, fill_data, filter_lessons
@@ -9,26 +10,36 @@ from shared.services.common import rooms, lesson_separator
 from datetime import datetime
 import pandas as pd
 
+from shared.types.lesson import Lesson
+
 def highlight_conflicts(value: list[str]):
     return [highlight_cell(v) for v in value]
 
 
 def highlight_cell(value: str):
     if "Конфликт" in value:
-        return 'background-color: red'
+        return 'background-color: yellow'
     if DIFFERENT_WEEKS_KEY in value:
         return 'background-color: #f7f7f7'
-    if len(value.split(lesson_separator)) >= 2:
-        return 'background-color: yellow'
+    # if len(value.split(lesson_separator)) >= 2:
+    #     return 'background-color: yellow'
     if len(value) != 0:
         return 'background-color: #f7f7f7'
     return ''
 
 async def grab_lessons():
+    l1: Lesson = {'course': 'Math', 'group': 'A', 'meta': 'Lesson 1', 'time': '9:00 AM', 'room': '101', 'weekday': 'Monday', 'teacher': 'Teacher 1', 'subject': 'Math', 'type': 'Lecture'}
+    l2: Lesson = {'course': 'Math', 'group': 'A', 'meta': 'Lesson 1', 'time': '9:00 AM', 'room': '101', 'weekday': 'Monday', 'teacher': 'Teacher 1', 'subject': 'Math', 'type': 'Lecture'}
+    has_conflict_inner_tuple(l1, l2)
+
+
     scheduleObj = await search_service.grab_groups("https://mmf.bsu.by/ru/raspisanie-zanyatij/")
     lessons = search_service.grab_schedule_sync(scheduleObj)
 
     lessons = filter_lessons(lessons)
+
+    with open("file.json", "w+", encoding="utf-8") as file:
+        json.dump(lessons, file, ensure_ascii=False, indent=4)
 
     times = list(collectTimes(lessons))
 

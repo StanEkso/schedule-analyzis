@@ -2,12 +2,7 @@ from ..types.lesson import Lesson
 
 matchers = [
   {
-    "courses": ['1'],
-    "groups": ['2', '6', '9'],
-    "type": "Лекция"
-  },
-  {
-    "courses": ['2'],
+    "courses": ['1', '2'],
     "groups": ['2', '6', '9'],
     "type": "Лекция"
   },
@@ -49,17 +44,22 @@ matchers = [
     "groups": ['7', '8'],
   },
   {
-    "subjects": ["Язык С#"],
-    "groups": ["1", "6"],
-  },
-  {
     "subjects": ["Физическая культура"],
     "courses": ["1", "2", "3"]
   },
   {
-    "courses": ["1"],
+    "courses": ["1", "2"],
     "groups": ["1", "2", "6", "9"],
     "subjects": ["Методы программирования", "Технологии программирования"]
+  },
+  {
+    "courses": ["1"],
+    "groups": ["3", "10"]
+  },
+  {
+    "courses": ["3"],
+    "groups": ["1", "6"],
+    "type": "Лекция"
   }
 ]
 
