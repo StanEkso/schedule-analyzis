@@ -89,13 +89,14 @@ class ParserService:
         lesson: Lesson = {
             "time": time,
             "meta": remarks,
-            "subject": subject_n_teacher,
+            "subject": subject_n_teacher.replace(lesson_extras[1] if len(lesson_extras) > 1 else "", "").strip(),
             "type": ParserService.convert_lesson_type(lesson_type),
             "room": room,
             "weekday": weekday,
             "teacher": lesson_extras[1] if len(lesson_extras) > 1 else "",
             "course": course,
-            "group": group
+            "group": group,
+            "rawSubject": subject_n_teacher
         }
         return lesson
 
