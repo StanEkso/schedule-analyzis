@@ -60,6 +60,16 @@ matchers = [
     "courses": ["3"],
     "groups": ["1", "6"],
     "type": "Лекция"
+  },
+  {
+    "courses": ["4"],
+    "groups": ["1", "5"],
+    "type": "Лекция"
+  },
+  {
+    "courses": ["4"],
+    "groups": ["1","2","9","10"],
+    "type": "Лекция",
   }
 ]
 
@@ -90,7 +100,7 @@ def is_matching_type(matcher: dict, lesson: Lesson):
   return True
 
 def is_matching_subject(matcher: dict, lesson: Lesson):
-  subjects: list[str] = matcher.get("subjects")
+  subjects: list[str] | None = matcher.get("subjects")
   if not bool(subjects):
     return True
   

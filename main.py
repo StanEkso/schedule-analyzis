@@ -4,8 +4,10 @@ import openpyxl
 from shared.analyze.main import has_conflict_inner_tuple
 from shared.services.search import search_service
 import asyncio
-from shared.services.analyze import DIFFERENT_WEEKS_KEY, check_data, collectTimes, create_base_object, fill_data, filter_lessons
-from shared.services.common import rooms, lesson_separator
+from shared.services.analyze import DIFFERENT_WEEKS_KEY, INFORMATION_HOUR_KEY, check_data, collectTimes, create_base_object, fill_data, filter_lessons
+from shared.services.common import rooms
+from shared.services.excel_read import read_from_excel, to_lessons, to_times
+
 
 from datetime import datetime
 import pandas as pd
@@ -19,8 +21,11 @@ def highlight_conflicts(value: list[str]):
 def highlight_cell(value: str):
     if "Конфликт" in value:
         return 'background-color: yellow'
+    if INFORMATION_HOUR_KEY in value.lower():
+        return 'background-color: #8b00ff'
     if DIFFERENT_WEEKS_KEY in value:
         return 'background-color: #f7f7f7'
+
     # if len(value.split(lesson_separator)) >= 2:
     #     return 'background-color: yellow'
     if len(value) != 0:
@@ -28,28 +33,29 @@ def highlight_cell(value: str):
     return ''
 
 async def grab_lessons():
-    l1: Lesson = {'course': 'Math', 'group': 'A', 'meta': 'Lesson 1', 'time': '9:00 AM', 'room': '101', 'weekday': 'Monday', 'teacher': 'Teacher 1', 'subject': 'Math', 'type': 'Lecture'}
-    l2: Lesson = {'course': 'Math', 'group': 'A', 'meta': 'Lesson 1', 'time': '9:00 AM', 'room': '101', 'weekday': 'Monday', 'teacher': 'Teacher 1', 'subject': 'Math', 'type': 'Lecture'}
-    has_conflict_inner_tuple(l1, l2)
+    df = read_from_excel()
 
+    times = to_times(df)
+    lessons = to_lessons(df)
 
-    scheduleObj = await search_service.grab_groups("https://mmf.bsu.by/ru/raspisanie-zanyatij/")
-    lessons = search_service.grab_schedule_sync(scheduleObj)
+    # scheduleObj = await search_service.grab_groups("https://mmf.bsu.by/ru/raspisanie-zanyatij/")
+
+    # lessons = search_service.grab_schedule_sync(scheduleObj)
 
     lessons = filter_lessons(lessons)
 
-    with open("file.json", "w+", encoding="utf-8") as file:
-        json.dump(lessons, file, ensure_ascii=False, indent=4)
+    # with open("file.json", "w+", encoding="utf-8") as file:
+    #     json.dump(lessons, file, ensure_ascii=False, indent=4)
 
-    times = list(collectTimes(lessons))
+    # times = list(collectTimes(lessons))
 
-    times.sort(key=lambda v: (v[0:1], v[2:3]))
+    # times.sort(key=lambda v: (v[0:1], v[2:3]))
 
-    print(times)
+    # print(times)
 
-    object = create_base_object()
+    object = create_base_object(times)
 
-    fill_data(lessons, object)
+    fill_data(lessons, object, times)
 
     check_data(object)
 

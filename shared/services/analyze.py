@@ -16,20 +16,20 @@ def collectTimes(lessons: list[Lesson]):
 
   return times
 
-def create_base_object():
+def create_base_object(times = lesson_times):
   base: dict = {
-      'Время\Аудитории': lesson_times
+      'Время\Аудитории': times
   }
   for room in rooms:
-    base[room] = [[] for _ in lesson_times]
+    base[room] = [[] for _ in times]
   
   return base
 
-def fill_data(lessons: list[Lesson], object):
+def fill_data(lessons: list[Lesson], object, times = lesson_times):
   for lesson in lessons:
     try:
       room = lesson.get("room")
-      time_index = lesson_times.index(lesson_to_time(lesson))
+      time_index = times.index(lesson_to_time(lesson))
       length = len(object[room][time_index])
 
       if length == 0:
@@ -51,12 +51,16 @@ def check_data(object: dict):
 
 DIFFERENT_WEEKS_KEY = "t-dw/"
 MATCHING_KEY = "t-mg/"
+INFORMATION_HOUR_KEY = "t-ih/"
 
 def to_item_string(lessons: list[Lesson]):
   mStr = lesson_separator.join([convert_lesson_to_str(v) for v in lessons])
-  first_week, second_week, others = split_into_weeks(lessons)
   if (has_conflicts(lessons)):
     return "Конфликт: " + mStr
+  
+  # Some lesson from lessons is information hour
+  if any(['Информационный час'.lower() in v['subject'].lower() for v in lessons]):
+    return INFORMATION_HOUR_KEY + mStr
   
   # if len(first_week) > 0 and len(second_week) > 0:
   #   return DIFFERENT_WEEKS_KEY + mStr
